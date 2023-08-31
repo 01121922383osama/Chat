@@ -10,7 +10,7 @@ Widget baseTextFormField({
   IconButton? suffixIconData,
   Widget? prefixIcon,
   InputBorder? inputborder,
-  required void Function()? onChanged,
+  required void Function(String value)? onChanged,
 }) {
   final ValueNotifier<TextDirection> textInputDirection =
       ValueNotifier(TextDirection.ltr);
@@ -28,15 +28,18 @@ Widget baseTextFormField({
       ),
       child: TextField(
         autofocus: false,
-        keyboardType:
-            hintText == 'Password' ? TextInputType.emailAddress : null,
+        keyboardType: (hintText == 'Password' || hintText == 'RepeatPassword')
+            ? TextInputType.emailAddress
+            : null,
         autocorrect: true,
         enabled: true,
         minLines: 1,
         maxLines: 1,
         textDirection: value,
         decoration: InputDecoration(
-          suffixIcon: hintText == 'Password' ? suffixIconData : null,
+          suffixIcon: (hintText == 'Password' || hintText == 'RepeatPassword')
+              ? suffixIconData
+              : null,
           hintText: hintText,
           prefixIcon: prefixIcon,
           labelText: labelText,
@@ -60,17 +63,20 @@ Widget baseTextFormField({
             ),
           ),
         ),
-        textInputAction: hintText == 'Password'
-            ? TextInputAction.done
-            : TextInputAction.next,
-        obscureText: hintText == 'Password' ? isDisAppear! : false,
+        textInputAction:
+            (hintText == 'Password' || hintText == 'RepeatPassword')
+                ? TextInputAction.done
+                : TextInputAction.next,
+        obscureText: (hintText == 'Password' || hintText == 'RepeatPassword')
+            ? isDisAppear!
+            : false,
         enableSuggestions: true,
         onChanged: (input) {
           if (input.trim().length < 2) {
             final directory = getDirection(input);
             if (directory != value) textInputDirection.value = directory;
           }
-          onChanged != null ? onChanged() : () {};
+          onChanged != null ? onChanged(input) : () {};
         },
       ),
     ),

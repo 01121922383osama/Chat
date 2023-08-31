@@ -1,15 +1,19 @@
+import 'package:chat/controller/Register_Bloc/register_bloc.dart';
+import 'package:chat/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'Pages/Login/login_page.dart';
 import 'Pages/Register/register_page.dart';
 import 'Pages/Splash/splash_page.dart';
-import 'constants/app_colors.dart';
+import 'Pages/home/home_page.dart';
+import 'constants/widgets/theme_app.dart';
 import 'controller/ObscureText_Bloc/obscure_text_bloc.dart';
 import 'controller/login_Bloc/login_bloc.dart';
 import 'core/routs_name.dart';
 
-void main() {
+void main() async {
+  await Global.init();
   runApp(const MyApp());
 }
 
@@ -26,65 +30,18 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => LoginBloc(),
         ),
+        BlocProvider(
+          create: (context) => RegisterBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Chat',
-        theme: ThemeData(
-          scaffoldBackgroundColor: AppColors.background,
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(
-              color: Colors.white,
-            ),
-            bodyMedium: TextStyle(
-              color: Colors.white,
-            ),
-            bodySmall: TextStyle(
-              color: Colors.white,
-            ),
-            headlineLarge: TextStyle(
-              color: Colors.white,
-            ),
-            headlineMedium: TextStyle(
-              color: Colors.white,
-            ),
-            headlineSmall: TextStyle(
-              color: Colors.white,
-            ),
-            displayLarge: TextStyle(
-              color: Colors.white,
-            ),
-            displayMedium: TextStyle(
-              color: Colors.white,
-            ),
-            displaySmall: TextStyle(
-              color: Colors.white,
-            ),
-            labelLarge: TextStyle(
-              color: Colors.white,
-            ),
-            labelMedium: TextStyle(
-              color: Colors.white,
-            ),
-            labelSmall: TextStyle(
-              color: Colors.white,
-            ),
-            titleLarge: TextStyle(
-              color: Colors.white,
-            ),
-            titleMedium: TextStyle(
-              color: Colors.white,
-            ),
-            titleSmall: TextStyle(
-              color: Colors.white,
-            ),
-          ),
-          colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
-          useMaterial3: true,
-        ),
+        theme: themeData,
         initialRoute: AppRouts.initial,
         routes: {
           AppRouts.initial: (context) => const SplashPage(),
+          AppRouts.homePage: (context) => const HomePage(),
           AppRouts.loginRout: (context) => const LoginPage(),
           AppRouts.register: (context) => const RegisterPage(),
         },
