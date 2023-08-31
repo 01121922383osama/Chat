@@ -1,4 +1,3 @@
-import 'package:chat/controller/Login_Controller/login_controller.dart';
 import 'package:chat/controller/login_Bloc/login_bloc.dart';
 import 'package:chat/controller/login_Bloc/login_event.dart';
 import 'package:chat/controller/login_Bloc/login_state.dart';
@@ -11,6 +10,7 @@ import '../../../constants/widgets/animation_button.dart';
 import '../../../constants/widgets/base_text_formfield.dart';
 import '../../../constants/widgets/base_text_widget.dart';
 import '../../../constants/widgets/media_query.dart';
+import '../../../controller/Login_Controller/login_controller.dart';
 import '../../../controller/ObscureText_Bloc/obscure_text_bloc.dart';
 import '../../../controller/ObscureText_Bloc/obscure_text_event.dart';
 import '../../../controller/ObscureText_Bloc/obscure_text_state.dart';
@@ -100,7 +100,7 @@ class BodyLogInPage extends StatelessWidget {
                 text: TextSpan(
                   children: [
                     const TextSpan(
-                      text: "Don't have an account? ",
+                      text: 'Don\'t have an account? ',
                     ),
                     TextSpan(
                       text: "Register",

@@ -48,7 +48,7 @@ class BodyRegisterPage extends StatelessWidget {
                 hintText: 'Name',
                 labelText: 'Name',
                 prefixIcon: const Icon(
-                  Icons.email,
+                  Icons.person,
                   color: Colors.white,
                 ),
                 onChanged: (value) {

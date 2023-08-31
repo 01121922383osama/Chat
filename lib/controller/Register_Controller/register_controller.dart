@@ -12,10 +12,10 @@ class RegisterController {
 
   Future<void> handleEmailRegister() async {
     final state = context.read<RegisterBloc>().state;
-    String userName = state.userName;
-    String email = state.email;
-    String password = state.password;
-    String repeatPassword = state.rePeatpassword;
+    String userName = state.userName.trim();
+    String email = state.email.trim();
+    String password = state.password.trim();
+    String repeatPassword = state.rePeatpassword.trim();
 
     if (userName.isEmpty ||
         email.isEmpty ||
@@ -31,6 +31,21 @@ class RegisterController {
     }
 
     try {
+      //////////////////////////////////
+      ///
+      showDialog(
+        context: context,
+        builder: (context) => SafeArea(
+          child: WillPopScope(
+            onWillPop: () async {
+              return false;
+            },
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ),
+      );
       final userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -38,8 +53,8 @@ class RegisterController {
       );
 
       if (userCredential.user != null) {
-        await userCredential.user!.sendEmailVerification();
-        await userCredential.user!.updateDisplayName(userName);
+        await userCredential.user?.sendEmailVerification();
+        await userCredential.user?.updateDisplayName(userName);
 
         await FirebaseFirestore.instance
             .collection('Users')
@@ -54,14 +69,26 @@ class RegisterController {
             msg:
                 'An email has been sent to your registered email. Please check your email inbox to activate your account.');
         Future.delayed(Duration.zero, () => Navigator.of(context).pop());
+        Future.delayed(Duration.zero, () => Navigator.of(context).pop());
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         toastInfo(msg: 'The password provided is too weak');
+        Future.delayed(Duration.zero, () => Navigator.of(context).pop());
       } else if (e.code == 'email-already-in-use') {
         toastInfo(msg: 'The email is already in use');
+        Future.delayed(Duration.zero, () => Navigator.of(context).pop());
       } else if (e.code == 'invalid-email') {
         toastInfo(msg: 'The email address is not valid');
+        Future.delayed(Duration.zero, () => Navigator.of(context).pop());
+      } else {
+        Future.delayed(
+          const Duration(seconds: 1),
+          () {
+            toastInfo(msg: 'Check your internet connection');
+            Future.delayed(Duration.zero, () => Navigator.of(context).pop());
+          },
+        );
       }
     }
   }
