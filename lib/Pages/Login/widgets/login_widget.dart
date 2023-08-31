@@ -31,10 +31,10 @@ class BodyLogInPage extends StatelessWidget {
               text: 'Login',
               fontSize: 35,
             ),
-            // SizedBox(
-            //   height: CustomMediaQuery(context).screenHeight / 5,
-            //   child: Lottie.asset('assets/images/chat.json'),
-            // ),
+            SizedBox(
+              height: CustomMediaQuery(context).screenHeight / 5,
+              child: Lottie.asset('assets/images/chat.json'),
+            ),
             baseTextWidget(
               alignment: Alignment.centerLeft,
               context: context,

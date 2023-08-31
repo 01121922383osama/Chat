@@ -14,7 +14,7 @@ class SplashPage extends StatelessWidget {
     });
     return Scaffold(
       body: Center(
-        // child: Lottie.asset('assets/images/chat.json'),
+        child: Lottie.asset('assets/images/chat.json'),
       ),
     );
   }
