@@ -48,6 +48,7 @@ class LoginController {
       }
       if (userCredential.user!.emailVerified) {
         toastInfo(msg: 'You need to verify your email account');
+        Future.delayed(Duration.zero, () => Navigator.of(context).pop());
         return;
       }
       var user = userCredential.user;
