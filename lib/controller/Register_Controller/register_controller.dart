@@ -63,7 +63,6 @@ class RegisterController {
       if (userCredential.user != null) {
         await userCredential.user?.sendEmailVerification();
         await userCredential.user?.updateDisplayName(userName);
-
         await FirebaseFirestore.instance
             .collection('Users')
             .doc(userCredential.user!.uid)

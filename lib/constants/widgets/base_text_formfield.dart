@@ -28,7 +28,9 @@ Widget baseTextFormField({
       ),
       child: TextField(
         autofocus: false,
-        keyboardType: (hintText == 'Password' || hintText == 'RepeatPassword')
+        keyboardType: (hintText == 'Email' ||
+                hintText == 'Password' ||
+                hintText == 'RepeatPassword')
             ? TextInputType.emailAddress
             : null,
         autocorrect: true,
@@ -64,7 +66,7 @@ Widget baseTextFormField({
           ),
         ),
         textInputAction:
-            (hintText == 'Password' || hintText == 'RepeatPassword')
+            (hintText == 'Password' && hintText == 'RepeatPassword')
                 ? TextInputAction.done
                 : TextInputAction.next,
         obscureText: (hintText == 'Password' || hintText == 'RepeatPassword')

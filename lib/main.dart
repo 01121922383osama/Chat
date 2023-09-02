@@ -1,3 +1,4 @@
+import 'package:chat/Pages/ProfilePage/profile_page.dart';
 import 'package:chat/controller/Register_Bloc/register_bloc.dart';
 import 'package:chat/global.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         routes: {
           AppRouts.initial: (context) => const SplashPage(),
           AppRouts.homePage: (context) => const HomePage(),
+          AppRouts.profilePage: (context) => const ProfilePage(),
           AppRouts.loginRout: (context) => const LoginPage(),
           AppRouts.register: (context) => const RegisterPage(),
         },

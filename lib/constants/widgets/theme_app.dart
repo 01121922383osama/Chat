@@ -7,7 +7,7 @@ ThemeData themeData = ThemeData(
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.background,
     centerTitle: true,
-    elevation: 0,
+    // elevation: 0,
     scrolledUnderElevation: 1.0,
     iconTheme: IconThemeData(
       color: AppColors.white,
@@ -23,6 +23,16 @@ ThemeData themeData = ThemeData(
       color: AppColors.white,
       fontSize: 22,
     ),
+  ),
+  listTileTheme: const ListTileThemeData(
+    textColor: AppColors.white,
+    iconColor: AppColors.white,
+    // titleTextStyle: TextStyle(
+    //   color: AppColors.white,
+    // ),
+    // subtitleTextStyle: TextStyle(
+    //   color: AppColors.white,
+    // ),
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(

@@ -52,7 +52,7 @@ class LoginController {
         toastInfo(msg: 'You don`t exist');
         return;
       }
-      if (!userCredential.user!.emailVerified) {
+      if (userCredential.user!.emailVerified) {
         toastInfo(msg: 'You need to verify your email account');
         Future.delayed(Duration.zero, () => Navigator.of(context).pop());
         return;
@@ -61,6 +61,7 @@ class LoginController {
       if (user != null) {
         await Global.storageServices.setLoggedIn(true);
         Future.delayed(Duration.zero, () => Navigator.of(context).pop());
+
         Future.delayed(
             Duration.zero,
             () => Navigator.of(context).pushNamedAndRemoveUntil(
