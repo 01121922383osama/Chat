@@ -18,11 +18,11 @@ Widget baseTextFormField({
   return ValueListenableBuilder<TextDirection>(
     valueListenable: textInputDirection,
     builder: (context, value, child) => Container(
-      // alignment: Alignment.center,
+      alignment: Alignment.center,
       margin: EdgeInsets.symmetric(
         horizontal: CustomMediaQuery(context).screenWidth / 25,
       ),
-      height: CustomMediaQuery(context).screenHeight / 15,
+      // height: CustomMediaQuery(context).screenHeight / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
       ),

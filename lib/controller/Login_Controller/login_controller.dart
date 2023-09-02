@@ -23,6 +23,12 @@ class LoginController {
       toastInfo(msg: 'You need to fill password');
       return;
     }
+    if (!email.contains('@')) {
+      toastInfo(
+          msg:
+              'Invalid email address format. Please include the "@" symbol in your email address.');
+      return;
+    }
     try {
       showDialog(
         context: context,
@@ -46,7 +52,7 @@ class LoginController {
         toastInfo(msg: 'You don`t exist');
         return;
       }
-      if (userCredential.user!.emailVerified) {
+      if (!userCredential.user!.emailVerified) {
         toastInfo(msg: 'You need to verify your email account');
         Future.delayed(Duration.zero, () => Navigator.of(context).pop());
         return;

@@ -16,7 +16,8 @@ class RegisterController {
     String email = state.email.trim();
     String password = state.password.trim();
     String repeatPassword = state.rePeatpassword.trim();
-
+    String imageUrl =
+        'https://firebasestorage.googleapis.com/v0/b/chat-73209.appspot.com/o/defaultImage%2FdefaultImage.png?alt=media&token=a8ddca03-acc7-4409-a329-0034007b5cd9';
     if (userName.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
@@ -29,7 +30,12 @@ class RegisterController {
       toastInfo(msg: 'Your password confirmation is wrong');
       return;
     }
-
+    if (!email.contains('@')) {
+      toastInfo(
+          msg:
+              'Invalid email address format. Please include the "@" symbol in your email address.');
+      return;
+    }
     try {
       //////////////////////////////////
       ///
@@ -46,6 +52,8 @@ class RegisterController {
           ),
         ),
       );
+      //////////////////////////////////
+      ///
       final userCredential =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
@@ -61,6 +69,7 @@ class RegisterController {
             .doc(userCredential.user!.uid)
             .set({
           'userName': userName,
+          'imageUrl': imageUrl,
           'email': email,
           'password': password,
         });
