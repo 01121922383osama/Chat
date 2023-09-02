@@ -1,3 +1,4 @@
+import 'package:chat/Pages/GetAllUsers/get_all_users.dart';
 import 'package:chat/Pages/ProfilePage/profile_page.dart';
 import 'package:chat/controller/Register_Bloc/register_bloc.dart';
 import 'package:chat/global.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
           AppRouts.profilePage: (context) => const ProfilePage(),
           AppRouts.loginRout: (context) => const LoginPage(),
           AppRouts.register: (context) => const RegisterPage(),
+          AppRouts.getAllUsers: (context) => const GetAllUsers(),
         },
       ),
     );

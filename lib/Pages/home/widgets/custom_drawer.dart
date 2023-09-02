@@ -80,6 +80,13 @@ class CusttomDrawer extends StatelessWidget {
                   onTap: () {},
                 ),
                 buildListile(
+                  text: 'All Users',
+                  iconData: Icons.supervised_user_circle_sharp,
+                  onTap: () {
+                    Navigator.of(context).pushNamed(AppRouts.getAllUsers);
+                  },
+                ),
+                buildListile(
                   text: 'Setting',
                   iconData: Icons.settings,
                   onTap: () {},

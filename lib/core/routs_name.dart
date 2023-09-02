@@ -4,4 +4,5 @@ class AppRouts {
   static const profilePage = 'profile_page';
   static const loginRout = 'login_page';
   static const register = 'register';
+  static const getAllUsers = 'getAllUsers';
 }

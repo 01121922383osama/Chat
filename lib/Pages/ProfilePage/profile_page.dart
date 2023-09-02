@@ -29,8 +29,6 @@ class ProfilePage extends StatelessWidget {
             );
           }
 
-          final updatedUserData = snapshot.data;
-
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
