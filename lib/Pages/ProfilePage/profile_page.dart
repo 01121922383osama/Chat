@@ -37,23 +37,17 @@ class ProfilePage extends StatelessWidget {
                   height: CustomMediaQuery(context).screenHeight / 40,
                 ),
                 Center(
-                  child: Container(
-                    width: CustomMediaQuery(context).screenWidth / 5,
-                    height: CustomMediaQuery(context).screenHeight / 10,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25),
-                      border: Border.all(
-                        color: Colors.white,
+                  child: CircleAvatar(
+                    radius: 50,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(userData.imageUrl!),
+                        ),
                       ),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(userData.imageUrl!),
-                      ),
-                    ),
-                    alignment: Alignment.bottomRight,
-                    child: const Padding(
-                      padding: EdgeInsets.all(2.0),
-                      child: Icon(
+                      alignment: Alignment.bottomRight,
+                      child: const Icon(
                         Icons.edit,
                         color: Colors.redAccent,
                       ),

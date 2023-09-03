@@ -34,17 +34,10 @@ class GetAllUsers extends StatelessWidget {
               itemBuilder: (context, index) {
                 return ListTile(
                   onTap: () {},
-                  trailing: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(
-                        color: Colors.white,
-                      ),
-                    ),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: Image.network(userDocs[index]['imageUrl']),
-                    ),
+                  trailing: CircleAvatar(
+                    radius: 22,
+                    backgroundColor: Colors.grey,
+                    child: Image.network(userDocs[index]['imageUrl']),
                   ),
                   title: Text(
                     userDocs[index]['userName'],

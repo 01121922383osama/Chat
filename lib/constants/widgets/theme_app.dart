@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
 ThemeData themeData = ThemeData(
+  fontFamily: 'OpenSans',
   scaffoldBackgroundColor: AppColors.background,
   appBarTheme: const AppBarTheme(
     backgroundColor: AppColors.background,
     centerTitle: true,
     // elevation: 0,
-    scrolledUnderElevation: 1.0,
+    // scrolledUnderElevation: 1.0,
     iconTheme: IconThemeData(
       color: AppColors.white,
       shadows: [
@@ -81,6 +82,6 @@ ThemeData themeData = ThemeData(
       color: Colors.white,
     ),
   ),
-  colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
+  // colorScheme: ColorScheme.fromSeed(seedColor: AppColors.background),
   useMaterial3: true,
 );

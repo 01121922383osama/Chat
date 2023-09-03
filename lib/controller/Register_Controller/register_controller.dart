@@ -17,7 +17,7 @@ class RegisterController {
     String password = state.password.trim();
     String repeatPassword = state.rePeatpassword.trim();
     String imageUrl =
-        'https://firebasestorage.googleapis.com/v0/b/chat-73209.appspot.com/o/defaultImage%2FdefaultImage.png?alt=media&token=a8ddca03-acc7-4409-a329-0034007b5cd9';
+        'https://firebasestorage.googleapis.com/v0/b/chat-73209.appspot.com/o/defaultImage%2Fperson.png?alt=media&token=790003b8-d454-4c25-90d9-2c9c7cd9c569';
     if (userName.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
