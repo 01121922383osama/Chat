@@ -41,6 +41,7 @@ class ProfilePage extends StatelessWidget {
                     radius: 50,
                     child: Container(
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
                         image: DecorationImage(
                           fit: BoxFit.cover,
                           image: NetworkImage(userData.imageUrl!),

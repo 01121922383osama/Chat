@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_cast
+
 import 'package:chat/constants/widgets/app_colors.dart';
 import 'package:chat/constants/widgets/media_query.dart';
 import 'package:chat/core/routs_name.dart';
@@ -47,12 +49,28 @@ class CusttomDrawer extends StatelessWidget {
                   ),
                   ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Colors.grey,
-                      radius: 30,
-                      child: updatedUserData?.imageUrl != null
+                        backgroundColor: Colors.grey,
+                        radius: 30,
+                        child: Container(
+                          /*
+                         updatedUserData?.imageUrl != null
                           ? Image.network(updatedUserData!.imageUrl!)
                           : Container(),
-                    ),
+                        */
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25),
+                            image: DecorationImage(
+                              image: updatedUserData?.imageUrl != null
+                                  ? NetworkImage(updatedUserData!.imageUrl!)
+                                      as ImageProvider<Object>
+                                  : const AssetImage(
+                                          'assets/images/defultchat.png')
+                                      as ImageProvider<Object>,
+                              fit: BoxFit
+                                  .cover, // You can adjust the fit as needed
+                            ),
+                          ),
+                        )),
                     title: Text(updatedUserData?.userName ?? 'User'),
                     subtitle: Text(isOnlline ? 'Online' : 'OffLine'),
                   ),

@@ -37,7 +37,15 @@ class GetAllUsers extends StatelessWidget {
                   trailing: CircleAvatar(
                     radius: 22,
                     backgroundColor: Colors.grey,
-                    child: Image.network(userDocs[index]['imageUrl']),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25),
+                          image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image:
+                                  NetworkImage(userDocs[index]['imageUrl']))),
+                    ),
+                    // child: Image.network(userDocs[index]['imageUrl']),
                   ),
                   title: Text(
                     userDocs[index]['userName'],
