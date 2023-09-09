@@ -1,4 +1,5 @@
 import 'package:chat/Pages/Chat/widgets/custom_card.dart';
+import 'package:chat/Pages/Select%20Contact/select_contact.dart';
 import 'package:chat/constants/widgets/list_chat_model.dart';
 import 'package:chat/model/chat_model.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,10 @@ class _ChatPageState extends State<ChatPage> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.grey[600],
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => const SelectContact()));
+        },
         child: const Icon(
           Icons.chat,
           color: Colors.white,

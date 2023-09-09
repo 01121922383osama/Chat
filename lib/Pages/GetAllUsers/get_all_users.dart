@@ -39,11 +39,14 @@ class GetAllUsers extends StatelessWidget {
                     backgroundColor: Colors.grey,
                     child: Container(
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image:
-                                  NetworkImage(userDocs[index]['imageUrl']))),
+                        borderRadius: BorderRadius.circular(25),
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            userDocs[index]['imageUrl'],
+                          ),
+                        ),
+                      ),
                     ),
                     // child: Image.network(userDocs[index]['imageUrl']),
                   ),

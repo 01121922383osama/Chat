@@ -1,3 +1,4 @@
+import 'package:chat/Pages/Camera%20Page/camera_page.dart';
 import 'package:chat/Pages/Chat/chat_page.dart';
 import 'package:chat/Pages/home/widgets/custom_drawer.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -16,7 +17,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     Connectivity().checkConnectivity();
-    tabController = TabController(length: 3, vsync: this, initialIndex: 0);
+    tabController = TabController(length: 4, vsync: this, initialIndex: 1);
     super.initState();
   }
 
@@ -66,6 +67,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           unselectedLabelColor: Colors.grey,
           tabs: const [
             Tab(
+              text: 'Camera',
+            ),
+            Tab(
               text: 'Chats',
             ),
             Tab(
@@ -91,6 +95,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       body: TabBarView(
         controller: tabController,
         children: const [
+          CameraPage(),
           ChatPage(),
           Text('2'),
           Text('3'),
