@@ -1,13 +1,20 @@
+import 'package:chat/Pages/Chat/widgets/oun_message_card.dart';
+import 'package:chat/Pages/Chat/widgets/reply_message_card.dart';
 import 'package:chat/constants/widgets/app_colors.dart';
 import 'package:chat/constants/widgets/media_query.dart';
 import 'package:chat/model/chat_model.dart';
+import 'package:chat/model/message_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 class IndivisualPage extends StatefulWidget {
   final ChatModel chatModel;
-  const IndivisualPage({Key? key, required this.chatModel}) : super(key: key);
+  final ChatModel? sourcechatModel;
+  const IndivisualPage(
+      {Key? key, this.sourcechatModel, required this.chatModel})
+      : super(key: key);
 
   @override
   State<IndivisualPage> createState() => _IndivisualPageState();
@@ -16,8 +23,13 @@ class IndivisualPage extends StatefulWidget {
 class _IndivisualPageState extends State<IndivisualPage> {
   bool emojiShowing = false;
   FocusNode focusNode = FocusNode();
+  io.Socket? socket;
+  bool sendbtn = false;
+  List<MessageModel> messages = [];
+  ScrollController scrollController = ScrollController();
   @override
   void initState() {
+    connect();
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -28,9 +40,59 @@ class _IndivisualPageState extends State<IndivisualPage> {
     super.initState();
   }
 
+  void connect() {
+    socket = io.io('http://192.168.1.11:5000', <String, dynamic>{
+      "transports": [
+        "websocket"
+      ], // Use a list with "websocket" as the transport
+      "autoConnect": false,
+    });
+    socket!.connect();
+    socket!.emit('signin', widget.sourcechatModel!.id);
+    socket!.onConnect((data) {
+      print('Connected to server');
+      socket?.on('message', (msg) {
+        if (msg != null && msg.containsKey('message')) {
+          setMessage('destination', msg['message']);
+          scrollController.animateTo(
+            scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    });
+    print(socket!.connected);
+  }
+
+  void sendMessage(String message, int sourceId, int targetId) {
+    setMessage('source', message);
+    socket!.emit('message', {
+      'message': message,
+      'sourceId': sourceId,
+      'targetId': targetId,
+    });
+  }
+
+  void setMessage(String type, String message) {
+    MessageModel messageModel = MessageModel(
+      type: type,
+      message: message,
+      time: DateTime.now().toString().substring(10, 16),
+    );
+
+    if (mounted) {
+      setState(() {
+        messages.add(messageModel);
+      });
+    }
+  }
+
   TextEditingController textEditingController = TextEditingController();
   @override
   void dispose() {
+    socket?.disconnect();
+    socket?.destroy();
     textEditingController.dispose();
     super.dispose();
   }
@@ -133,92 +195,147 @@ class _IndivisualPageState extends State<IndivisualPage> {
           child: Column(
             children: [
               Expanded(
-                child: ListView(
-                    // Your ListView contents go here
-                    ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.transparent.withOpacity(0.5),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25),
-                  ),
+                child: ListView.builder(
+                  itemCount: messages.length + 1,
+                  shrinkWrap: true,
+                  controller: scrollController,
+                  itemBuilder: (context, index) {
+                    if (index == messages.length) {
+                      return Container(
+                        height: CustomMediaQuery(context).screenHeight / 15,
+                      );
+                    }
+                    if (messages[index].type == 'source') {
+                      return OunMasseageCard(
+                        sendmessage: messages[index].message,
+                        time: messages[index].time,
+                      );
+                    } else {
+                      return ReplyMasseageCard(
+                        replyMessage: messages[index].message,
+                        time: messages[index].time,
+                      );
+                    }
+                  },
                 ),
-                margin: const EdgeInsets.only(left: 2, right: 2),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          color: Colors.white,
-                          onPressed: () {
-                            setState(() {
-                              focusNode.unfocus();
-                              focusNode.canRequestFocus = false;
-                              emojiShowing = !emojiShowing;
-                            });
-                          },
-                          icon: const Icon(Icons.emoji_emotions),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            focusNode: focusNode,
-                            enableSuggestions: true,
-                            cursorColor: AppColors.white,
-                            textAlignVertical: TextAlignVertical.center,
-                            keyboardType: TextInputType.multiline,
-                            maxLines: 5,
-                            minLines: 1,
-                            controller: textEditingController,
-                            decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintStyle: const TextStyle(
-                                color: Colors.grey,
-                              ),
-                              hintText: 'Type Message',
-                              suffixIcon: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    color: AppColors.white,
-                                    onPressed: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent,
-                                        builder: (context) {
-                                          return bottomsheet();
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.attach_file),
-                                  ),
-                                  IconButton(
-                                    color: AppColors.white,
-                                    onPressed: () {},
-                                    icon: const Icon(Icons.camera),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(5.0),
-                                    child: CircleAvatar(
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: const Icon(
-                                          Icons.mic,
-                                          color: Colors.black,
+              ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent.withOpacity(0.5),
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25),
+                    ),
+                  ),
+                  margin: const EdgeInsets.only(left: 2, right: 2),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(
+                            color: Colors.white,
+                            onPressed: () {
+                              setState(() {
+                                focusNode.unfocus();
+                                focusNode.canRequestFocus = false;
+                                emojiShowing = !emojiShowing;
+                              });
+                            },
+                            icon: const Icon(Icons.emoji_emotions),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  setState(() {
+                                    sendbtn = true;
+                                  });
+                                } else {
+                                  setState(() {
+                                    sendbtn = false;
+                                  });
+                                }
+                              },
+                              focusNode: focusNode,
+                              enableSuggestions: true,
+                              cursorColor: AppColors.white,
+                              textAlignVertical: TextAlignVertical.center,
+                              keyboardType: TextInputType.multiline,
+                              maxLines: 5,
+                              minLines: 1,
+                              controller: textEditingController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintStyle: const TextStyle(
+                                  color: Colors.grey,
+                                ),
+                                hintText: 'Type Message',
+                                suffixIcon: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      color: AppColors.white,
+                                      onPressed: () {
+                                        showModalBottomSheet(
+                                          context: context,
+                                          backgroundColor: Colors.transparent,
+                                          builder: (context) {
+                                            return bottomsheet();
+                                          },
+                                        );
+                                      },
+                                      icon: const Icon(Icons.attach_file),
+                                    ),
+                                    IconButton(
+                                      color: AppColors.white,
+                                      onPressed: () {},
+                                      icon: const Icon(Icons.camera),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: CircleAvatar(
+                                        child: IconButton(
+                                          onPressed: () {
+                                            if (sendbtn &&
+                                                textEditingController
+                                                    .text.isNotEmpty) {
+                                              scrollController.animateTo(
+                                                scrollController
+                                                    .position.maxScrollExtent,
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                curve: Curves.easeOut,
+                                              );
+                                              sendMessage(
+                                                textEditingController.text,
+                                                widget.sourcechatModel!.id,
+                                                widget.chatModel.id,
+                                              );
+                                              textEditingController.clear();
+                                              setState(() {
+                                                sendbtn = false;
+                                              });
+                                            }
+                                          },
+                                          icon: Icon(
+                                            sendbtn ? Icons.send : Icons.mic,
+                                            color: Colors.black,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                contentPadding: const EdgeInsets.all(5),
                               ),
-                              contentPadding: const EdgeInsets.all(5),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
               emojiShowing ? emojiSelect() : const SizedBox.shrink(),

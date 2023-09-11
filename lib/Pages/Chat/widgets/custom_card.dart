@@ -5,7 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomCard extends StatelessWidget {
   final ChatModel chatModel;
-  const CustomCard({Key? key, required this.chatModel}) : super(key: key);
+  final ChatModel? sourceChat;
+  const CustomCard({Key? key, this.sourceChat, required this.chatModel})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,10 @@ class CustomCard extends StatelessWidget {
         InkWell(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => IndivisualPage(chatModel: chatModel)));
+                builder: (context) => IndivisualPage(
+                      chatModel: chatModel,
+                      sourcechatModel: sourceChat,
+                    )));
           },
           child: ListTile(
             dense: true,

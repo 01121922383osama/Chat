@@ -1,12 +1,16 @@
 import 'package:chat/Pages/Camera%20Page/camera_page.dart';
 import 'package:chat/Pages/Chat/chat_page.dart';
+import 'package:chat/Pages/Status/status_page.dart';
 import 'package:chat/Pages/home/widgets/custom_drawer.dart';
+import 'package:chat/Res/Login%20screen/login_page_res.dart';
+import 'package:chat/model/chat_model.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
+  const HomePage({super.key, this.chatmodels, this.sourceChat});
+  final List<ChatModel>? chatmodels;
+  final ChatModel? sourceChat;
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -14,10 +18,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   late TabController tabController;
   @override
-  @override
   void initState() {
     Connectivity().checkConnectivity();
-    tabController = TabController(length: 4, vsync: this, initialIndex: 1);
+    tabController = TabController(length: 5, vsync: this, initialIndex: 1);
     super.initState();
   }
 
@@ -76,6 +79,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               text: 'Status',
             ),
             Tab(
+              text: 'Users',
+            ),
+            Tab(
               text: 'Calls',
             ),
           ],
@@ -88,17 +94,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   snapshot.data == ConnectivityResult.wifi
               ? true
               : false;
-
           return CusttomDrawer(isOnlline: isOnline);
         },
       ),
       body: TabBarView(
         controller: tabController,
-        children: const [
-          CameraPage(),
-          ChatPage(),
-          Text('2'),
-          Text('3'),
+        children: [
+          const CameraPage(),
+          ChatPage(
+            chatmodel: widget.chatmodels ?? [],
+            sourceChatmodel: widget.sourceChat,
+          ),
+          const StatusPage(),
+          const LoginScreenRes(),
+          const Text('3'),
         ],
       ),
     );
