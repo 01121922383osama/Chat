@@ -1,3 +1,4 @@
+import 'package:chat/Pages/Status/widgets/other_status.dart';
 import 'package:flutter/material.dart';
 
 class HeaderOwnStatus extends StatelessWidget {
@@ -8,10 +9,13 @@ class HeaderOwnStatus extends StatelessWidget {
     return ListTile(
       leading: Stack(
         children: [
-          const CircleAvatar(
-            radius: 27,
-            backgroundColor: Colors.white,
-            backgroundImage: AssetImage('assets/images/balram.jpg'),
+          CustomPaint(
+            painter: StatusPainter(isSean: true, statusNum: 7),
+            child: const CircleAvatar(
+              radius: 27,
+              backgroundColor: Colors.white,
+              backgroundImage: AssetImage('assets/images/balram.jpg'),
+            ),
           ),
           Positioned(
             bottom: 0,

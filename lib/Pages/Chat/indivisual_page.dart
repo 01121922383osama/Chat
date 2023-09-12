@@ -41,7 +41,7 @@ class _IndivisualPageState extends State<IndivisualPage> {
   }
 
   void connect() {
-    socket = io.io('http://192.168.1.11:5000', <String, dynamic>{
+    socket = io.io('http://192.168.1.33:5000', <String, dynamic>{
       "transports": [
         "websocket"
       ], // Use a list with "websocket" as the transport
@@ -91,8 +91,6 @@ class _IndivisualPageState extends State<IndivisualPage> {
   TextEditingController textEditingController = TextEditingController();
   @override
   void dispose() {
-    socket?.disconnect();
-    socket?.destroy();
     textEditingController.dispose();
     super.dispose();
   }
@@ -299,8 +297,9 @@ class _IndivisualPageState extends State<IndivisualPage> {
                                         child: IconButton(
                                           onPressed: () {
                                             if (sendbtn &&
-                                                textEditingController
-                                                    .text.isNotEmpty) {
+                                                textEditingController.text
+                                                    .trim()
+                                                    .isNotEmpty) {
                                               scrollController.animateTo(
                                                 scrollController
                                                     .position.maxScrollExtent,

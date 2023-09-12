@@ -29,14 +29,12 @@ class _StatusPageState extends State<StatusPage> {
             ),
           ),
           const SizedBox(height: 15),
-          Container(
-            child: FloatingActionButton(
-              elevation: 5,
-              backgroundColor: Colors.greenAccent[700],
-              onPressed: () {},
-              child: const Icon(
-                Icons.camera,
-              ),
+          FloatingActionButton(
+            elevation: 5,
+            backgroundColor: Colors.greenAccent[700],
+            onPressed: () {},
+            child: const Icon(
+              Icons.camera,
             ),
           ),
         ],
@@ -50,27 +48,39 @@ class _StatusPageState extends State<StatusPage> {
             const OtherStatus(
               name: 'Osama',
               imageName: '2.jpeg',
+              isSean: true,
+              statusNum: 5,
             ),
             const OtherStatus(
               name: 'Ali',
               imageName: '2.jpeg',
+              isSean: true,
+              statusNum: 2,
             ),
             const OtherStatus(
               name: 'Sied',
               imageName: '2.jpeg',
+              isSean: true,
+              statusNum: 3,
             ),
             lableName('Viewed update'),
             const OtherStatus(
               name: 'Osama',
               imageName: '2.jpeg',
+              isSean: false,
+              statusNum: 1,
             ),
             const OtherStatus(
               name: 'Ali',
               imageName: '2.jpeg',
+              isSean: false,
+              statusNum: 2,
             ),
             const OtherStatus(
               name: 'Sied',
               imageName: '2.jpeg',
+              isSean: false,
+              statusNum: 10,
             ),
           ],
         ),
