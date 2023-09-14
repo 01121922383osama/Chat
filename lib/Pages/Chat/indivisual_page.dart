@@ -1,5 +1,8 @@
-import 'package:chat/Pages/Chat/widgets/oun_message_card.dart';
-import 'package:chat/Pages/Chat/widgets/reply_message_card.dart';
+import 'dart:convert';
+
+import 'package:chat/Pages/Camera%20Page/camera_page.dart';
+import 'package:chat/Pages/Chat/widgets/own_file_card.dart';
+import 'package:chat/Pages/Chat/widgets/reply_file_card.dart';
 import 'package:chat/constants/widgets/app_colors.dart';
 import 'package:chat/constants/widgets/media_query.dart';
 import 'package:chat/model/chat_model.dart';
@@ -7,7 +10,13 @@ import 'package:chat/model/message_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:socket_io_client/socket_io_client.dart' as io;
+
+import '../Camera Page/camera_view_page.dart';
+import 'widgets/oun_message_card.dart';
+import 'widgets/reply_message_card.dart';
 
 class IndivisualPage extends StatefulWidget {
   final ChatModel chatModel;
@@ -27,6 +36,10 @@ class _IndivisualPageState extends State<IndivisualPage> {
   bool sendbtn = false;
   List<MessageModel> messages = [];
   ScrollController scrollController = ScrollController();
+  ImagePicker imagePicker = ImagePicker();
+  XFile? file;
+  int popTime = 0;
+
   @override
   void initState() {
     connect();
@@ -41,7 +54,8 @@ class _IndivisualPageState extends State<IndivisualPage> {
   }
 
   void connect() {
-    socket = io.io('http://192.168.1.33:5000', <String, dynamic>{
+    // url = https://feather-shadowed-sweater.glitch.me
+    socket = io.io('https://grandiose-fan-mailman.glitch.me', <String, dynamic>{
       "transports": [
         "websocket"
       ], // Use a list with "websocket" as the transport
@@ -53,7 +67,11 @@ class _IndivisualPageState extends State<IndivisualPage> {
       print('Connected to server');
       socket?.on('message', (msg) {
         if (msg != null && msg.containsKey('message')) {
-          setMessage('destination', msg['message']);
+          setMessage(
+            'destination',
+            msg['message'],
+            msg['path'],
+          );
           scrollController.animateTo(
             scrollController.position.maxScrollExtent,
             duration: const Duration(milliseconds: 300),
@@ -65,20 +83,22 @@ class _IndivisualPageState extends State<IndivisualPage> {
     print(socket!.connected);
   }
 
-  void sendMessage(String message, int sourceId, int targetId) {
-    setMessage('source', message);
+  void sendMessage(String message, int sourceId, int targetId, String path) {
+    setMessage('source', message, path);
     socket!.emit('message', {
       'message': message,
       'sourceId': sourceId,
       'targetId': targetId,
+      'path': path,
     });
   }
 
-  void setMessage(String type, String message) {
+  void setMessage(String type, String message, String path) {
     MessageModel messageModel = MessageModel(
       type: type,
       message: message,
       time: DateTime.now().toString().substring(10, 16),
+      path: path,
     );
 
     if (mounted) {
@@ -88,10 +108,41 @@ class _IndivisualPageState extends State<IndivisualPage> {
     }
   }
 
+  void onImageSend(String path, String message) async {
+    print('hi there=============================================== $path');
+    for (var i = 0; i < popTime; i++) {
+      Navigator.of(context).pop();
+    }
+    setState(() {
+      popTime = 0;
+    });
+    var request = http.MultipartRequest('POST',
+        Uri.parse('https://grandiose-fan-mailman.glitch.me/routes/addimage'));
+    request.files.add(await http.MultipartFile.fromPath('img', path));
+    request.headers.addAll({
+      "content-type": "multipart/from-data",
+    });
+    http.StreamedResponse response = await request.send();
+    var httpResponse = await http.Response.fromStream(response);
+    var date = json.decode(httpResponse.body);
+    print(date['path']);
+    setMessage('source', message, path);
+    socket!.emit('message', {
+      'message': message,
+      'sourceId': widget.sourcechatModel!.id,
+      'targetId': widget.chatModel.id,
+      'path': date['path'],
+    });
+    print(response.statusCode);
+    print(message);
+  }
+
   TextEditingController textEditingController = TextEditingController();
+
   @override
   void dispose() {
     textEditingController.dispose();
+    CamerViewPage.textEditingController.text.trim();
     super.dispose();
   }
 
@@ -204,18 +255,40 @@ class _IndivisualPageState extends State<IndivisualPage> {
                       );
                     }
                     if (messages[index].type == 'source') {
-                      return OunMasseageCard(
-                        sendmessage: messages[index].message,
-                        time: messages[index].time,
-                      );
+                      if (messages[index].path.isNotEmpty) {
+                        return OwnFileCard(
+                          path: messages[index].path,
+                          message: messages[index].message!,
+                          time: messages[index].time!,
+                        );
+                      } else {
+                        return OunMasseageCard(
+                          sendmessage: messages[index].message,
+                          time: messages[index].time,
+                        );
+                      }
                     } else {
-                      return ReplyMasseageCard(
-                        replyMessage: messages[index].message,
-                        time: messages[index].time,
-                      );
+                      if (messages[index].path.isNotEmpty) {
+                        return ReplyFileCard(
+                          path: messages[index].path,
+                          message: messages[index].message!,
+                          time: messages[index].time!,
+                        );
+                      } else {
+                        return ReplyMasseageCard(
+                          replyMessage: messages[index].message,
+                          time: messages[index].time,
+                        );
+                      }
                     }
                   },
                 ),
+                // child: ListView(
+                //   children:  [ if (messages[index].path.isNotEmpty)
+                //     OwnFileCard(),
+                //     ReplyFileCard(path: ,),
+                //   ],
+                // ),
               ),
               Align(
                 alignment: Alignment.bottomCenter,
@@ -288,7 +361,24 @@ class _IndivisualPageState extends State<IndivisualPage> {
                                     ),
                                     IconButton(
                                       color: AppColors.white,
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        setState(() {
+                                          popTime = 2;
+                                        });
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CameraPage(
+                                                      onImageSend: () =>
+                                                          onImageSend(
+                                                        file!.path,
+                                                        CamerViewPage
+                                                            .textEditingController
+                                                            .text
+                                                            .trim(),
+                                                      ),
+                                                    )));
+                                      },
                                       icon: const Icon(Icons.camera),
                                     ),
                                     Padding(
@@ -311,6 +401,7 @@ class _IndivisualPageState extends State<IndivisualPage> {
                                                 textEditingController.text,
                                                 widget.sourcechatModel!.id,
                                                 widget.chatModel.id,
+                                                '',
                                               );
                                               textEditingController.clear();
                                               setState(() {
@@ -363,31 +454,65 @@ class _IndivisualPageState extends State<IndivisualPage> {
                 bgcolor: Colors.pink,
                 iconData: Icons.camera_alt,
                 text: 'Document',
+                onTap: () {},
               ),
               iconCreation(
                 bgcolor: Colors.indigo,
                 iconData: Icons.insert_drive_file,
                 text: 'Camera',
+                onTap: () {
+                  setState(() {
+                    popTime = 3;
+                  });
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CameraPage(
+                            onImageSend: () => onImageSend(
+                              file!.path,
+                              CamerViewPage.textEditingController.text.trim(),
+                            ),
+                          )));
+                  /////////////////////////////
+                },
               ),
               iconCreation(
                 bgcolor: Colors.purple,
                 iconData: Icons.insert_photo,
                 text: 'Gallery',
+                onTap: () async {
+                  setState(() {
+                    popTime = 2;
+                  });
+                  file =
+                      await imagePicker.pickImage(source: ImageSource.gallery);
+
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => CamerViewPage(
+                            path: file!.path,
+                            onImageSend: (p0) => onImageSend(
+                              file!.path,
+                              CamerViewPage.textEditingController.text.trim(),
+                            ),
+                          )));
+                  ///////////////////////////////
+                },
               ),
               iconCreation(
                 bgcolor: Colors.orange,
                 iconData: Icons.headset,
                 text: 'Audio',
+                onTap: () {},
               ),
               iconCreation(
                 bgcolor: Colors.teal,
                 iconData: Icons.location_pin,
                 text: 'Location',
+                onTap: () {},
               ),
               iconCreation(
                 bgcolor: Colors.blue,
                 iconData: Icons.person,
                 text: 'Contact',
+                onTap: () {},
               ),
             ],
           ),
@@ -396,9 +521,14 @@ class _IndivisualPageState extends State<IndivisualPage> {
     );
   }
 
-  Widget iconCreation({IconData? iconData, Color? bgcolor, String? text}) {
+  Widget iconCreation({
+    IconData? iconData,
+    Color? bgcolor,
+    String? text,
+    void Function()? onTap,
+  }) {
     return InkWell(
-      onTap: () {},
+      onTap: onTap,
       child: Column(
         children: [
           CircleAvatar(

@@ -4,9 +4,10 @@ import 'package:chat/constants/widgets/media_query.dart';
 import 'package:flutter/material.dart';
 
 class CamerViewPage extends StatelessWidget {
-  const CamerViewPage({super.key, required this.path});
+  const CamerViewPage({super.key, required this.path, this.onImageSend});
   final String path;
-
+  final Function(String)? onImageSend;
+  static TextEditingController textEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,22 +67,31 @@ class CamerViewPage extends StatelessWidget {
                 ),
                 width: CustomMediaQuery(context).screenWidth,
                 child: TextFormField(
+                  controller: textEditingController,
                   maxLines: 6,
                   minLines: 1,
                   cursorColor: Colors.white,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     border: InputBorder.none,
-                    hintStyle: TextStyle(
+                    hintStyle: const TextStyle(
                       color: Colors.white,
                     ),
                     hintText: 'Add Caption...',
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.add_photo_alternate,
                     ),
-                    suffixIcon: CircleAvatar(
-                      backgroundColor: Colors.teal,
-                      radius: 27,
-                      child: Icon(Icons.check),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                        if (onImageSend != null) {
+                          onImageSend!(path);
+                          textEditingController.text.trim();
+                        }
+                      },
+                      child: const CircleAvatar(
+                        backgroundColor: Colors.teal,
+                        radius: 27,
+                        child: Icon(Icons.check),
+                      ),
                     ),
                   ),
                 ),

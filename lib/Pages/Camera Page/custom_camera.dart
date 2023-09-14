@@ -11,8 +11,8 @@ import 'package:path_provider/path_provider.dart';
 List<CameraDescription>? camera;
 
 class CustomCamera extends StatefulWidget {
-  const CustomCamera({super.key});
-
+  const CustomCamera({super.key, this.onImageSend});
+  final Function()? onImageSend;
   @override
   State<CustomCamera> createState() => _CustomCameraState();
 }
@@ -259,7 +259,10 @@ class _CustomCameraState extends State<CustomCamera> {
         () => Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => CamerViewPage(path: newImageFile.path),
+            builder: (context) => CamerViewPage(
+              path: newImageFile.path,
+              onImageSend: (p0) => widget.onImageSend,
+            ),
           ),
         ),
       );
