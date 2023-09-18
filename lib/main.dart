@@ -14,7 +14,6 @@ import 'controller/ObscureText_Bloc/obscure_text_bloc.dart';
 import 'controller/login_Bloc/login_bloc.dart';
 import 'core/routs_name.dart';
 
-// gg
 void main() async {
   await Global.init();
   runApp(const MyApp());

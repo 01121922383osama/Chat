@@ -4,6 +4,7 @@ import 'package:chat/constants/services/storage_services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import 'firebase_options.dart';
 
@@ -11,7 +12,13 @@ class Global {
   static late AppStorageServices storageServices;
   static Future<void> init() async {
     WidgetsFlutterBinding.ensureInitialized();
-
+    // await initializeService();
+    FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+    flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestPermission();
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

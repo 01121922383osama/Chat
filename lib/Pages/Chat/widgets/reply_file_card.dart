@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:full_screen_image/full_screen_image.dart';
 
 class ReplyFileCard extends StatelessWidget {
   const ReplyFileCard(
@@ -36,13 +37,19 @@ class ReplyFileCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
+                    child: InteractiveViewer(
+                  panAxis: PanAxis.free,
+                  child: FullScreenWidget(
+                    disposeLevel: DisposeLevel.Medium,
                     child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                          'https://grandiose-fan-mailman.glitch.me/uploads/$path'),
-                      fit: BoxFit.fitHeight,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                              'https://fair-typhoon-event.glitch.me/uploads/$path'),
+                          fit: BoxFit.fitHeight,
+                        ),
+                      ),
                     ),
                   ),
                 )

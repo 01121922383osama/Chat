@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:full_screen_image/full_screen_image.dart';
 
 class OwnFileCard extends StatelessWidget {
   const OwnFileCard(
@@ -38,13 +39,23 @@ class OwnFileCard extends StatelessWidget {
             child: Column(
               children: [
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: FileImage(
-                          File(path),
+                  child: InteractiveViewer(
+                    panAxis: PanAxis.free,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    constrained: true,
+                    scaleEnabled: true,
+                    trackpadScrollCausesScale: true,
+                    child: FullScreenWidget(
+                      disposeLevel: DisposeLevel.Medium,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: FileImage(
+                              File(path),
+                            ),
+                            fit: BoxFit.fitHeight,
+                          ),
                         ),
-                        fit: BoxFit.fitHeight,
                       ),
                     ),
                   ),

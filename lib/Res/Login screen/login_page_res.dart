@@ -31,7 +31,7 @@ class _LoginScreenResState extends State<LoginScreenRes> {
       id: 2,
     ),
     ChatModel(
-      name: 'Seid Khalid',
+      name: 'Khalid Nabil',
       icon: 'iconassets/images/person.svg',
       isGroup: false,
       time: '4:00',

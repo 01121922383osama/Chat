@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:chat/Pages/Camera%20Page/camera_page.dart';
@@ -7,6 +8,7 @@ import 'package:chat/constants/widgets/app_colors.dart';
 import 'package:chat/constants/widgets/media_query.dart';
 import 'package:chat/model/chat_model.dart';
 import 'package:chat/model/message_model.dart';
+import 'package:chat/services/notifcation_services.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -39,10 +41,12 @@ class _IndivisualPageState extends State<IndivisualPage> {
   ImagePicker imagePicker = ImagePicker();
   XFile? file;
   int popTime = 0;
-
+  NotificationService notificationService = NotificationService();
   @override
   void initState() {
+    notificationService.initNotification();
     connect();
+
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         setState(() {
@@ -50,12 +54,21 @@ class _IndivisualPageState extends State<IndivisualPage> {
         });
       }
     });
+
     super.initState();
   }
 
+  void showNotification({int? user, String? message}) async {
+    await notificationService.showNotification(
+      title: 'User $user',
+      body: message,
+    );
+  }
+
   void connect() {
+    // http://192.168.1.33:5000
     // url = https://feather-shadowed-sweater.glitch.me
-    socket = io.io('https://grandiose-fan-mailman.glitch.me', <String, dynamic>{
+    socket = io.io('https://fair-typhoon-event.glitch.me', <String, dynamic>{
       "transports": [
         "websocket"
       ], // Use a list with "websocket" as the transport
@@ -72,10 +85,15 @@ class _IndivisualPageState extends State<IndivisualPage> {
             msg['message'],
             msg['path'],
           );
-          scrollController.animateTo(
-            scrollController.position.maxScrollExtent,
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeOut,
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            () {
+              scrollController.animateTo(
+                scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            },
           );
         }
       });
@@ -105,6 +123,12 @@ class _IndivisualPageState extends State<IndivisualPage> {
       setState(() {
         messages.add(messageModel);
       });
+      if (type == 'destination') {
+        showNotification(
+          user: widget.sourcechatModel!.id,
+          message: message,
+        );
+      }
     }
   }
 
@@ -117,7 +141,7 @@ class _IndivisualPageState extends State<IndivisualPage> {
       popTime = 0;
     });
     var request = http.MultipartRequest('POST',
-        Uri.parse('https://grandiose-fan-mailman.glitch.me/routes/addimage'));
+        Uri.parse('https://fair-typhoon-event.glitch.me/routes/addimage'));
     request.files.add(await http.MultipartFile.fromPath('img', path));
     request.headers.addAll({
       "content-type": "multipart/from-data",
@@ -143,6 +167,8 @@ class _IndivisualPageState extends State<IndivisualPage> {
   void dispose() {
     textEditingController.dispose();
     CamerViewPage.textEditingController.text.trim();
+    socket?.disconnect();
+    socket?.destroy();
     super.dispose();
   }
 
@@ -390,6 +416,10 @@ class _IndivisualPageState extends State<IndivisualPage> {
                                                 textEditingController.text
                                                     .trim()
                                                     .isNotEmpty) {
+                                              Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 300),
+                                              );
                                               scrollController.animateTo(
                                                 scrollController
                                                     .position.maxScrollExtent,
@@ -460,7 +490,7 @@ class _IndivisualPageState extends State<IndivisualPage> {
                 bgcolor: Colors.indigo,
                 iconData: Icons.insert_drive_file,
                 text: 'Camera',
-                onTap: () {
+                onTap: () async {
                   setState(() {
                     popTime = 3;
                   });
@@ -479,20 +509,30 @@ class _IndivisualPageState extends State<IndivisualPage> {
                 iconData: Icons.insert_photo,
                 text: 'Gallery',
                 onTap: () async {
+                  file =
+                      await imagePicker.pickImage(source: ImageSource.gallery);
+                  if (file != null && file?.path != null) {
+                    Future.delayed(
+                      Duration.zero,
+                      () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => CamerViewPage(
+                                  path: file!.path,
+                                  onImageSend: (p0) => onImageSend(
+                                    file!.path,
+                                    CamerViewPage.textEditingController.text
+                                        .trim(),
+                                  ),
+                                )));
+                      },
+                    );
+                  } else {
+                    return;
+                  }
+
                   setState(() {
                     popTime = 2;
                   });
-                  file =
-                      await imagePicker.pickImage(source: ImageSource.gallery);
-
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => CamerViewPage(
-                            path: file!.path,
-                            onImageSend: (p0) => onImageSend(
-                              file!.path,
-                              CamerViewPage.textEditingController.text.trim(),
-                            ),
-                          )));
                   ///////////////////////////////
                 },
               ),
